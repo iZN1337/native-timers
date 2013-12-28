@@ -25,13 +25,16 @@ static stock
 	g_NativeArgs[MAX_NATIVE_TIMERS][MAX_NATIVE_ARGUMENTS]
 ;
 
+// SYSREQ.pri doesn't work unless the function is used somewhere.
+// To be on the safe side, we include all of the SA-MP natives here.
+
 forward @function_list(); @function_list()
 {
 	new
 	    Float:X,
 	    Float:Y,
 	    Float:Z;
-	    
+
     HTTP(0, 0, "", "", "");
     CreateObject(0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     AttachObjectToVehicle(0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -220,7 +223,7 @@ stock IsVariadicFunction(function[])
 stock Native_Timer(function[], interval, repeating, specifiers[] = "", {Float,_}:...)
 {
 	static timerid;
-	    
+
 	for (timerid = 0; g_NativeTimers[timerid][g_NativeActive]; )
 	{
 	    timerid++;
@@ -258,7 +261,7 @@ stock Native_Kill(timerid)
 
     g_NativeTimers[timerid][g_NativeActive] = false;
 	g_NativeTimers[timerid][g_NativeSpecifiers][0] = '\0';
-	
+
 	for (new i = 0; i < MAX_NATIVE_ARGUMENTS; i ++) {
 	    g_NativeArgs[timerid][i] = 0;
 	}
@@ -271,7 +274,7 @@ forward @call_native(timerid); @call_native(timerid)
  	    i = 0,
 		length,
 		index;
-	
+
 	length = strlen(g_NativeTimers[timerid][g_NativeSpecifiers]);
  	index = g_NativeTimers[timerid][g_NativeIndex];
 
@@ -301,13 +304,13 @@ forward @call_native(timerid); @call_native(timerid)
 	length <<= 2;
 
 	#emit PUSH.C length
-	
+
 	#emit LOAD.pri index
 	#emit SYSREQ.pri
 
 	#emit LCTRL 5
 	#emit SCTRL 4
-	
+
 	if (!g_NativeTimers[timerid][g_NativeRepeat])
 	{
 	    Native_Kill(timerid);
